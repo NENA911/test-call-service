@@ -1,0 +1,113 @@
+openapi: 3.0.1
+info:
+  title: Test Call Service
+  version: "1.0"
+servers:
+  - url: http://localhost/TestCall/v1
+paths:
+  /SendCallRequests/{psapId}:
+    put:
+      tags:
+        - SendCallRequest
+      summary: Updates an existing send call request identified by the PSAP ID or creates a new one if the request does not exist
+      operationId: SendCallRequest
+      parameters:
+        - name: psapId
+          in: path
+          description: ID of the PSAP which wishes to have test calls sent to it
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Request to update/create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendCallsRequest'
+        required: true
+      responses:
+        '200':
+          description: Request successfully updated/created
+        '442':
+          description: Unacceptable Parameters
+        '454':
+          description: Unspecified Error
+        '458':
+          description: Policy violation
+  /Versions:
+    servers:
+      - url: https://api.example.com/TestCall
+        description: Override base path for Versions query
+    get:
+      tags:
+        - RetrieveVersions
+      summary: Retrieves all supported versions, vendor parameter is optional.
+      operationId: RetrieveVersions
+      responses:
+        '200':
+          description: Versions found
+          content:
+            application/json:
+              schema:
+                $ref: 'i3-common.yaml#/components/schemas/VersionsArray'
+components:
+  schemas:
+    SendCallsRequest:
+      type: object
+      required:
+        - psapId
+        - location
+        - frequency
+        - discrepancyRateLimit
+        - startDate
+        - endDate
+      properties:
+        psapId:
+          type: string
+          readOnly: true
+        location:
+          type: string
+        frequency:
+          type: integer
+          format: int32
+        discrepancyRateLimit:
+          type: integer
+          format: int32
+        startDate:
+          type: string
+          format: date-time
+          example: '2020-03-10T10:00:00-05:00'
+        endDate:
+          type: string
+          format: date-time
+          example: '2020-03-11T10:00:00-05:00'
+        testConditions:
+          $ref: '#/components/schemas/PrrTest'
+    PrrTest:
+      type: object
+      required:
+        - hostName
+        - nominalNextHop
+        - conditions
+      properties:
+        hostName:
+          type: string
+          description: ESRP Hostname that test conditions are specified for.
+        nominalNextHop:
+          type: string
+          format: uri
+          description: URI of for nominal next hop that rule set conditions are applied to.
+        conditions:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+              - value
+            properties:
+              name:
+                $ref: 'i3-common.yaml#/components/schemas/ConditionType'
+                description: Condition name
+              value:
+                type: string
+                description: Condition value
