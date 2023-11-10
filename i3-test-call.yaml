@@ -27,13 +27,13 @@ paths:
         required: true
       responses:
         '200':
-          description: Request successfully updated/created
+          description: Request Successfully Updated/Created
         '442':
           description: Unacceptable Parameters
         '454':
           description: Unspecified Error
         '458':
-          description: Policy violation
+          description: Policy Violation
   /Versions:
     servers:
       - url: https://api.example.com/TestCall
@@ -45,7 +45,7 @@ paths:
       operationId: RetrieveVersions
       responses:
         '200':
-          description: Versions found
+          description: Versions Found
           content:
             application/json:
               schema:
